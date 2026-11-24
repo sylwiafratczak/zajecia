@@ -1,0 +1,67 @@
+---
+title: "cv"
+output: html_document
+date: "2026-11-24"
+---
+
+# Imię Nazwisko
+
+**Email:** 101375@student.up.poznan.pl  
+**Telefon:** +48 123 456 789  
+**Lokalizacja:** Poznan, Polska  
+
+## Podsumowanie
+Krótki, zwięzły opis Twojego doświadczenia, umiejętności i celów zawodowych.
+
+## Doświadczenie zawodowe
+
+### Nazwa Stanowiska | Firma
+*Okres zatrudnienia (np. Styczeń 2020 - Obecnie)*
+
+- Kluczowe osiągnięcia i obowiązki
+- Opis projektów i odpowiedzialności
+- Wymierne efekty pracy (np. zwiększenie wydajności o X%)
+
+### Poprzednie Stanowisko | Inna Firma
+*Okres zatrudnienia*
+
+- Główne zadania
+- Osiągnięcia
+- Zdobyte umiejętności
+
+## Edukacja
+
+### Tytuł Studiów | Nazwa Uczelni
+*Rok ukończenia*
+
+- Specjalizacja: Informatyka
+- Średnia ocen: 3.00
+- Istotne osiągnięcia akademickie: brak
+
+## Umiejętności
+
+- **Techniczne:** Python, R, SQL, Git
+- **Miękkie:** Komunikacja, praca zespołowa, rozwiązywanie problemów
+- **Języki:** Polski (ojczysty), Angielski (B2)
+
+## Certyfikaty
+
+- Nazwa Certyfikatu, Instytucja, Rok
+- Kolejny Certyfikat
+
+## Projekty
+
+### Nazwa Projektu
+- Krótki opis
+- Technologie użyte
+- Link do repozytorium (opcjonalnie)
+
+## Zainteresowania
+
+- Programowanie
+- Analiza danych
+- Fotografia
+- Podróże
+
+## Referencje
+Dostępne na życzenie

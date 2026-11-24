@@ -1,0 +1,203 @@
+---
+title: "Palmer Penguins"
+author: "Sylwia Frątczak"
+output: html_document
+date: "`r Sys.Date()`"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
+```
+
+## Załadowanie danych
+
+Najpierw musimy załadować pakiet, który zawiera interesujące nas dane i dowiedzieć się, co te dane przedstawiają.
+
+```{r, eval=FALSE}
+install.packages("palmerpenguins")
+```
+
+
+
+Ładujemy pakiet do pamięci R za pomocą polecenia `library()`:
+
+```{r}
+library(palmerpenguins)
+data(penguins)
+?penguins
+```
+
+
+## Informacje wstępne
+Używając pakietu 'dplyr', określmy teraz, ile jest pingwinów dla każdego gatunku i dla każdej lokalizacji:
+
+```{r}
+library(kableExtra)
+library(dplyr)
+library(pander)
+data_species <- penguins %>%
+  count(species) 
+# jest mniej więcej równoważne poleceniu penguins %>% group_by(species) %>% summarise(n = n())
+ 
+data_species
+kable(data_species)  %>% 
+  kable_paper(c("striped", "hover"), full_width = F)
+```
+
+Wszystkie możliwości prezentacji danych w formie tabeli można znaleźć na stronie: [kableEXtra](https://cran.r-project.org/web/packages/kableExtra/vignettes/awesome_table_in_html.html)
+
+Liczba pingwinów na wyspie:
+  
+```{r wyspy}
+data_island <- penguins %>%
+  count(island)
+ 
+data_island
+ 
+kable(data_island) %>%
+  kable_paper(c("striped", "hover"), full_width = FALSE)
+```
+
+Teraz znajdźmy średnią masę ciała pingwinów:
+```{r srednia-masa}
+mean_mass <- penguins %>%
+  summarise(srednia_masa_g = mean(body_mass_g, na.rm = TRUE))
+ 
+mean_mass
+ 
+kable(mean_mass) %>%
+  kable_paper(c("striped", "hover"), full_width = FALSE)
+```
+
+Następnie znajdźmy średnią masy ciała w podziale na grupy (gatunki). Użyjemy funkcji 'group_by':
+
+```{r srednia-gatunki}
+mean_mass_species <- penguins %>%
+  group_by(species) %>%
+  summarise(srednia_masa_g = mean(body_mass_g, na.rm = TRUE))
+ 
+mean_mass_species
+ 
+kable(mean_mass_species) %>%
+  kable_paper(c("striped", "hover"), full_width = FALSE)
+```
+
+Co jeśli chcemy wyfiltrować tylko te pingwiny, które mają masę ciała mniejszą od średniej ich gatunku? 
+
+```{r ponizej-sredniej}
+below_mean <- penguins %>%
+  group_by(species) %>%
+  filter(body_mass_g < mean(body_mass_g, na.rm = TRUE)) %>%
+  ungroup()
+ 
+below_mean %>%
+  kable() %>%
+  kable_paper(c("striped", "hover"), full_width = FALSE) %>%
+  scroll_box(height = "400px")
+```
+
+Dalej, jeśli chcemy ułożyć pingwiny, które mają mniejszą masę ciała niż średnia ich gatunku, w określonej kolejności (użyjemy funkcji 'arrange' z funkcją 'desc'):
+
+```{r sortowanie}
+below_mean_sorted <- below_mean %>%
+  arrange(desc(body_mass_g))
+ 
+below_mean_sorted %>%
+  kable() %>%
+  kable_paper(c("striped", "hover"), full_width = FALSE) %>%
+  scroll_box(height = "400px")
+```
+
+## Podstawowe wykresy
+Przejdźmy do wizualizacji naszych danych za pomocą biblioteki 'ggplot2'. 
+Jak poprzednio, najpierw instalujemy pakiet w systemie (przypomnienie: jest to jednorazowy krok), a następnie ładujemy pakiet do środowiska.
+
+```{r}
+library(ggplot2)
+```
+
+Na początek stworzymy podstawowy wykres rozrzutu przedstawiający zmienność masy ciała w odniesieniu do długości płetwy pingwina:
+
+```{r scatter}
+ggplot(penguins, aes(x = body_mass_g, y = flipper_length_mm)) +
+  geom_point() +
+  labs(
+    title = "Masa ciała a długość płetwy pingwinów",
+    x = "Masa ciała (g)",
+    y = "Długość płetwy (mm)"
+  ) +
+  theme_minimal()
+```
+
+Następnie narysujemy wykres liniowy przedstawiający zmienność masy ciała w odniesieniu do długości płetwy pingwina:
+```{r line}
+ggplot(penguins, aes(x = body_mass_g, y = flipper_length_mm)) +
+  geom_line() +
+  labs(
+    title = "Masa ciała a długość płetwy pingwinów (wykres liniowy)",
+    x = "Masa ciała (g)",
+    y = "Długość płetwy (mm)"
+  ) +
+  theme_minimal()
+```
+
+Dalej, stworzymy wykres słupkowy i histogram. Na wykresie słupkowym każdy punkt danych jest reprezentowany przez słupek, którego długość jest proporcjonalna do reprezentowanej wartości.
+Podobnie jak na wykresie słupkowym, histogram przedstawia słupki, ale dla punktów danych pogrupowanych w zakresy. Zakresy są ciągłymi przedziałami liczb.
+Wykres słupkowy i histogram przedstawiają liczbę pingwinów o danej masie ciała: 
+
+```{r histogram}
+ggplot(penguins, aes(x = body_mass_g)) +
+  geom_histogram(fill = "steelblue", colour = "white") +
+  labs(
+    title = "Histogram masy ciała pingwinów",
+    x = "Masa ciała (g)",
+    y = "Liczba pingwinów"
+  ) +
+  theme_minimal()
+```
+
+```{r barplot}
+ggplot(penguins, aes(x = species)) +
+  geom_bar(fill = "steelblue") +
+  labs(
+    title = "Liczba pingwinów według gatunku",
+    x = "Gatunek",
+    y = "Liczba pingwinów"
+  ) +
+  theme_minimal()
+```
+
+## Bardziej interesujące wykresy...
+Aby dodać odrobinę koloru, włączamy parametr koloru w nawiasach estetyki, gdzie punkty są podświetlane w zależności od gatunku pingwinów:
+
+```{r scatter-colour}
+ggplot(penguins, aes(x = body_mass_g, y = flipper_length_mm, colour = species)) +
+  geom_point() +
+  labs(
+    title = "Masa ciała a długość płetwy pingwinów",
+    x = "Masa ciała (g)",
+    y = "Długość płetwy (mm)",
+    colour = "Gatunek"
+  ) +
+  theme_minimal()
+```
+
+
+Podobnie możemy zmienić rozmiar punktów na podstawie poziomów kolumny czynnikowej. Jeśli chcemy pójść jeszcze dalej, możemy zmienić kształt punktu na podstawie poziomów kolumny czynnikowej:
+```{r scatter-size}
+ggplot(penguins, aes(x = body_mass_g, y = flipper_length_mm,
+                     colour = species, size = island)) +
+  geom_point(alpha = 0.7) +
+  labs(
+    title = "Masa ciała a długość płetwy – rozmiar punktu według wyspy",
+    x = "Masa ciała (g)",
+    y = "Długość płetwy (mm)",
+    colour = "Gatunek",
+    size = "Wyspa"
+  ) +
+  theme_minimal()
+```
+
+```{r sesja}
+sessionInfo()
+```
